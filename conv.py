@@ -3,7 +3,8 @@ import numpy as np
 
 class Conv2d:
     """
-    Conv2d takes 2d numpy array as an input. 
+    Conv2d takes 2d numpy array as an input. Use it only as first layer, because 
+    Conv2d is not returning the loss gradient 
     """
     def __init__(self, num_filters, filter_size):
         self.num_filters = num_filters
@@ -12,8 +13,8 @@ class Conv2d:
     
     def iterate_regions(self, input):
         """
-        Generates all possible input regions using valid padding. 
-        - input is a 2d numpy array.
+        Generates all possible input regions using valid padding
+        - input is a 2d numpy array
         """
         h, w = input.shape
         
@@ -24,8 +25,8 @@ class Conv2d:
     
     def forward(self, input):
         """
-        Performs forward pass of the conv layer using the given input.
-        Returns a 3d numpy array with dimensions (h, w, num_filters).
+        Performs forward pass of the conv layer using the given input
+        Returns a 3d numpy array with dimensions (h, w, num_filters)
         - input is a 2d numpy array
         """
         self.last_input = input
@@ -38,3 +39,17 @@ class Conv2d:
         
         return feature_map
     
+    def backprop(self, d_L_d_out, lr):
+        """
+        Performs a backward pass of the conv layer
+        - d_L_d_out is the loss gradient for this layer's outputs
+        - lr is a float
+        """
+        d_L_d_filters = np.zeros(self.filters.shape)
+        
+        for input_region, i, j in self.iterate_regions(self.last_input):
+            for f in range(self.num_filters):
+                d_L_d_filters[f] += d_L_d_out[i, j, f] * input_region
+        
+        #Update filters
+        self.filters -= lr * d_L_d_filters
