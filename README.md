@@ -1,2 +1,2 @@
 # CNN-from-scratch
-CNN implementation from scratch using numpy
+CNN implementation for grayscale images from scratch using numpy
