@@ -14,7 +14,7 @@ class Conv2d:
     def iterate_regions(self, input):
         """
         Generates all possible input regions using valid padding
-        - input is a 2d numpy array
+        - input: 2d numpy array
         """
         h, w = input.shape
         
@@ -27,7 +27,7 @@ class Conv2d:
         """
         Performs forward pass of the conv layer using the given input
         Returns a 3d numpy array with dimensions (h, w, num_filters)
-        - input is a 2d numpy array
+        - input: 2d numpy array
         """
         self.last_input = input
         
@@ -43,7 +43,7 @@ class Conv2d:
         """
         Performs a backward pass of the conv layer
         - d_L_d_out is the loss gradient for this layer's outputs
-        - lr is a float
+        - lr: float
         """
         d_L_d_filters = np.zeros(self.filters.shape)
         
