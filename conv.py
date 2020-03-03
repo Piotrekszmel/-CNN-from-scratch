@@ -13,7 +13,7 @@ class Conv2d:
     def iterate_regions(self, input):
         """
         Generates all possible input regions using valid padding. 
-        Input is a 2d numpy array.
+        - input is a 2d numpy array.
         """
         h, w = input.shape
         
@@ -21,4 +21,20 @@ class Conv2d:
             for j in range(w - self.filter_size + 1):
                 input_region = input[i:(i + self.filter_size), j:(j + self.filter_size)]
                 yield input_region, i, j
+    
+    def forward(self, input):
+        """
+        Performs forward pass of the conv layer using the given input.
+        Returns a 3d numpy array with dimensions (h, w, num_filters).
+        - input is a 2d numpy array
+        """
+        self.last_input = input
+        
+        h, w = input.shape
+        feature_map = np.zeros((h - self.filter_size + 1, w - self.filter_size + 1, self.num_filters))
+        
+        for input_region, i, j in self.iterate_regions(input):
+            feature_map = np.sum(input_region * self.num_filters, axis=(1, 2))
+        
+        return feature_map
     
