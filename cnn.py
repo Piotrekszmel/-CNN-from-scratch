@@ -74,3 +74,15 @@ def training_loop(num):
             l, acc = train(img, label)
             loss += l
             correct += acc
+
+
+def test():
+    loss = 0
+    correct = 0
+    for img, label in zip(test_images, test_labels):
+        _, l, acc = forward()
+        loss += l
+        correct += acc
+    
+    print("Test Loss: ", loss / len(test_images))
+    print("Test Accuracy: ", correct / len(test_images))
