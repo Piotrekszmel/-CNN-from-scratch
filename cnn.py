@@ -32,4 +32,45 @@ def forward(input, label):
     loss = -np.log(output[label])
     acc = 1 if np.argmax(output) == label else 0
 
-    return out, loss, acc
+    return output, loss, acc
+
+
+def train(input, label, lr=0.005):
+    """
+    Completes a full training step on the given image and label.
+    Returns the cross-entropy loss and accuracy.
+    - image is a 2d numpy array
+    - label is a digit
+    - lr is the learning rate
+    """
+    # Forward
+    output, loss, accuracy = forward(input, label)
+
+    gradient = np.zeros(10)
+    gradient[label] = -1 / output[label]
+
+    # Backprop
+    gradient = softmax.backprop(gradient, lr)
+    gradient = maxpool2d.backprop(gradient)
+    gradient = conv2d.backprop(gradient, lr)
+
+    return loss, accuracy
+
+
+def training_loop(num):
+    for epoch in range(num):
+        print("---- Epoch {} ----".format(epoch + 1))
+        permutation = np.random.permutation(len(train_images))
+        train_images = train_images[permutation]
+        train_labels = train_labels[permutation]
+
+        loss = 0
+        correct = 0
+        for i, (img, label) in enumerate(zip(train_images, train_labels)):
+            if i % 100 == 99:
+                print("[{}] Average Loss: {} | Accuracy: {}%"
+                .format(i + 1, loss / i + 1, correct))
+            
+            l, acc = train(img, label)
+            loss += l
+            correct += acc
