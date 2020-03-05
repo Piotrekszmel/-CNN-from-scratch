@@ -57,7 +57,7 @@ def train(input, label, lr=0.005):
     return loss, accuracy
 
 
-def training_loop(num):
+def training_loop(num, train_images, train_labels):
     for epoch in range(num):
         print("---- Epoch {} ----".format(epoch + 1))
         permutation = np.random.permutation(len(train_images))
@@ -70,19 +70,27 @@ def training_loop(num):
             if i % 100 == 99:
                 print("[{}] Average Loss: {} | Accuracy: {}%"
                 .format(i + 1, loss / i + 1, correct))
+                
+                correct = 0
+                
             
             l, acc = train(img, label)
             loss += l
             correct += acc
 
 
-def test():
+def test(test_images, test_labels):
     loss = 0
     correct = 0
     for img, label in zip(test_images, test_labels):
-        _, l, acc = forward()
+        _, l, acc = forward(img, label)
         loss += l
         correct += acc
     
     print("Test Loss: ", loss / len(test_images))
     print("Test Accuracy: ", correct / len(test_images))
+
+
+if __name__ == "__main__":
+    training_loop(3, train_images, train_labels)
+    test(test_images, test_labels)

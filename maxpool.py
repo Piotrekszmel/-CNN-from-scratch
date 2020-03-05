@@ -21,7 +21,7 @@ class MaxPooling2d:
         h, w, _ = input.shape
         
         new_h = h // 2
-        new_w = h // 2
+        new_w = w // 2
         
         for i in range(new_h):
             for j in range(new_w):
@@ -38,7 +38,7 @@ class MaxPooling2d:
         self.last_input = input
         
         h, w, num_filters = input.shape
-        output = np.zeros((h // 2, h // 2, num_filters))
+        output = np.zeros((h // 2, w // 2, num_filters))
         
         for input_region, i, j in self.iterate_regions(input):
             output[i, j] = np.amax(input_region, axis=(0, 1))
@@ -54,7 +54,7 @@ class MaxPooling2d:
         d_L_d_input = np.zeros(self.last_input.shape)
         
         for input_region, i, j in self.iterate_regions(self.last_input):
-            h, w, f = input.shape
+            h, w, f = input_region.shape
             amax = np.amax(input_region, axis=(0, 1))
             
             for i2 in range(h):

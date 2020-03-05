@@ -35,7 +35,7 @@ class Conv2d:
         feature_map = np.zeros((h - self.filter_size + 1, w - self.filter_size + 1, self.num_filters))
         
         for input_region, i, j in self.iterate_regions(input):
-            feature_map = np.sum(input_region * self.num_filters, axis=(1, 2))
+            feature_map[i, j] = np.sum(input_region * self.filters, axis=(1, 2))
         
         return feature_map
     
