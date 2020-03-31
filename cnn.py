@@ -1,32 +1,16 @@
 from keras.datasets import mnist
 import numpy as np 
 
-from conv import Conv2d
-from maxpool import MaxPooling2d
-from softmax import Softmax
 
-(train_images, train_labels), (test_images, test_labels) = mnist.load_data()
-
-train_images = train_images[:1000]
-train_labels = train_labels[:1000]
-
-test_images = test_images[:1000]
-test_labels = test_labels[:1000]
-
-conv2d = Conv2d(8, 3)
-maxpool2d = MaxPooling2d(2)
-softmax = Softmax(13*13*8, 10)
-
-
-def forward(input, label):
+def forward(input, label, conv, maxpool, softmax):
     """
     Completes a forward pass of the CNN and calculates the accuracy and
     cross-entropy loss.
     - input: 2d numpy array
     - label: digit (int)
     """
-    output = conv2d.forward((input / 255) - 0.5)
-    output = maxpool2d.forward(output)
+    output = conv.forward((input / 255) - 0.5)
+    output = maxpool.forward(output)
     output = softmax.forward(output)
 
     loss = -np.log(output[label])
@@ -35,7 +19,7 @@ def forward(input, label):
     return output, loss, acc
 
 
-def train(input, label, lr=0.005):
+def train(input, label, conv, maxpool, softmax, lr=0.005):
     """
     Completes a full training step on the given image and label.
     Returns the cross-entropy loss and accuracy.
@@ -44,20 +28,20 @@ def train(input, label, lr=0.005):
     - lr is the learning rate
     """
     # Forward
-    output, loss, accuracy = forward(input, label)
+    output, loss, accuracy = forward(input, label, conv, maxpool, softmax)
 
     gradient = np.zeros(10)
     gradient[label] = -1 / output[label]
 
     # Backprop
     gradient = softmax.backprop(gradient, lr)
-    gradient = maxpool2d.backprop(gradient)
-    gradient = conv2d.backprop(gradient, lr)
+    gradient = maxpool.backprop(gradient)
+    gradient = conv.backprop(gradient, lr)
 
     return loss, accuracy
 
 
-def training_loop(num, train_images, train_labels):
+def training_loop(num, train_images, train_labels, conv, maxpool, softmax, lr=0.005):
     for epoch in range(num):
         print("---- Epoch {} ----".format(epoch + 1))
         permutation = np.random.permutation(len(train_images))
@@ -74,23 +58,18 @@ def training_loop(num, train_images, train_labels):
                 correct = 0
                 
             
-            l, acc = train(img, label)
+            l, acc = train(img, label, conv, maxpool, softmax, lr)
             loss += l
             correct += acc
 
 
-def test(test_images, test_labels):
+def test(test_images, test_labels, conv, maxpool, softmax):
     loss = 0
     correct = 0
     for img, label in zip(test_images, test_labels):
-        _, l, acc = forward(img, label)
+        _, l, acc = forward(img, label, conv, maxpool, softmax)
         loss += l
         correct += acc
     
     print("Test Loss: ", loss / len(test_images))
     print("Test Accuracy: ", correct / len(test_images))
-
-
-if __name__ == "__main__":
-    training_loop(3, train_images, train_labels)
-    test(test_images, test_labels)
