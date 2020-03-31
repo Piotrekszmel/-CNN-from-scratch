@@ -3,15 +3,16 @@ CNN implementation from scratch using numpy for grayscale images.
 
 An example of using the convolutional neural network is provided in example.py
 
+
 conv.py:
-    - iterate_regions -> iterate through pixels
-    - forward -> forward propagation 
-    - backprop -> backprogation
+   - iterate_regions -> iterate through pixels
+   - forward -> forward propagation 
+   - backprop -> backprogation
 
 maxpool.py: 
-    - iterate_regions -> iterate through pixels
-    - forward -> forward propagation 
-    - backprop -> backprogation
+  - iterate_regions -> iterate through pixels
+  - forward -> forward propagation 
+  - backprop -> backprogation
 
 softmax.py:
   - forward -> forward propagation of softmax 
